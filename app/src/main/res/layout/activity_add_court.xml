@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/addCourtRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Court"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"/>
+
+        <EditText
+            android:id="@+id/courtNameInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Court name"
+            android:inputType="textCapWords"/>
+
+        <EditText
+            android:id="@+id/courtAddressInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Address"
+            android:inputType="textPostalAddress"/>
+
+        <EditText
+            android:id="@+id/courtWebsiteInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Website (optional)"
+            android:inputType="textUri"/>
+
+        <EditText
+            android:id="@+id/courtCountInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Number of courts"
+            android:inputType="number"
+            android:text="1"/>
+
+        <CheckBox
+            android:id="@+id/indoorCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Indoor"
+            android:layout_marginTop="12dp"/>
+
+        <Button
+            android:id="@+id/saveCourtButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Court"
+            android:layout_marginTop="24dp"/>
+
+        <Button
+            android:id="@+id/cancelCourtButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cancel"/>
+
+    </LinearLayout>
+</ScrollView>
