@@ -39,6 +39,14 @@ class MainActivity : AppCompatActivity() {
                     Intent(this, AddCourtActivity::class.java)
                 )
             }
+
+        findViewById<Button>(R.id.viewCourtsButton)
+            .setOnClickListener {
+                startActivity(
+                    Intent(this, ViewCourtsActivity::class.java)
+                )
+            }
+
     }
 
     override fun onResume() {
