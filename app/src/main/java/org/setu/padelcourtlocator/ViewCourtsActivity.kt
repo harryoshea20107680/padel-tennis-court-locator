@@ -1,20 +1,20 @@
 package org.setu.padelcourtlocator
 
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class ViewCourtsActivity : AppCompatActivity() {
 
-    private lateinit var courtsContainer: LinearLayout
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: PadelCourtAdapter
     private lateinit var emptyText: TextView
     private lateinit var countText: TextView
 
@@ -23,7 +23,9 @@ class ViewCourtsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_view_courts)
 
+        // Handle system bars
         val root = findViewById<View>(R.id.viewCourtsRoot)
+
         val left = root.paddingLeft
         val top = root.paddingTop
         val right = root.paddingRight
@@ -33,6 +35,7 @@ class ViewCourtsActivity : AppCompatActivity() {
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars()
             )
+
             view.setPadding(
                 left + bars.left,
                 top + bars.top,
@@ -42,10 +45,22 @@ class ViewCourtsActivity : AppCompatActivity() {
             insets
         }
 
-        courtsContainer = findViewById(R.id.courtsContainer)
+        // Connect XML views
+        recyclerView = findViewById(R.id.courtsRecyclerView)
         emptyText = findViewById(R.id.emptyCourtsText)
         countText = findViewById(R.id.courtsCountText)
 
+        // Configure RecyclerView
+        adapter = PadelCourtAdapter(
+            AppData.courts.findAll()
+        )
+
+        recyclerView.layoutManager =
+            LinearLayoutManager(this)
+
+        recyclerView.adapter = adapter
+
+        // Back navigation
         findViewById<Button>(R.id.backToMenuButton)
             .setOnClickListener {
                 finish()
@@ -54,77 +69,28 @@ class ViewCourtsActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        displayCourts()
+
+        if (::adapter.isInitialized) {
+            displayCourts()
+        }
     }
 
     private fun displayCourts() {
         val courts = AppData.courts.findAll()
 
-        courtsContainer.removeAllViews()
+        // Refresh list
+        adapter.updateCourts(courts)
+
+        // Update count
         countText.text = "Saved courts: ${courts.size}"
 
-        emptyText.visibility =
-            if (courts.isEmpty()) View.VISIBLE else View.GONE
-
-        for (court in courts) {
-            val courtLayout = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
-                val padding = dp(16)
-                setPadding(padding, padding, padding, padding)
-            }
-
-            val title = TextView(this).apply {
-                text = court.name
-                textSize = 20f
-                setTypeface(null, Typeface.BOLD)
-            }
-
-            val address = TextView(this).apply {
-                text = court.address
-                textSize = 16f
-            }
-
-            val details = TextView(this).apply {
-                val type = if (court.isIndoor) "Indoor" else "Outdoor"
-                val count = court.courtCount
-                val multipleCourts = if (count == 1) "court" else "courts"
-
-                text = "$count $type $multipleCourts"
-                textSize = 14f
-            }
-
-            courtLayout.addView(title)
-            courtLayout.addView(address)
-            courtLayout.addView(details)
-
-            val website = court.website
-            if (!website.isNullOrBlank()) {
-                val websiteText = TextView(this).apply {
-                    text = website
-                    textSize = 14f
-                }
-                courtLayout.addView(websiteText)
-            }
-
-            courtsContainer.addView(courtLayout)
-
-            val divider = View(this).apply {
-                setBackgroundColor(Color.LTGRAY)
-            }
-
-            courtsContainer.addView(
-                divider,
-                LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    dp(1)
-                )
-            )
+        // Show empty message if necessary
+        if (courts.isEmpty()) {
+            emptyText.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        } else {
+            emptyText.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
         }
-    }
-
-    private fun dp(value: Int): Int {
-        return (value * resources.displayMetrics.density)
-            .toInt()
-            .coerceAtLeast(1)
     }
 }
