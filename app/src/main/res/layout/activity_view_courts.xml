@@ -1,53 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/viewCourtsRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
+    android:orientation="vertical"
     android:padding="24dp">
 
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:text="Saved Padel Courts"
+        android:textSize="28sp"
+        android:textStyle="bold"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Saved Padel Courts"
-            android:textSize="28sp"
-            android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/courtsCountText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Saved courts: 0"
+        android:textSize="16sp"
+        android:layout_marginTop="12dp"/>
 
-        <TextView
-            android:id="@+id/courtsCountText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Saved courts: 0"
-            android:textSize="16sp"
-            android:layout_marginTop="12dp"/>
+    <TextView
+        android:id="@+id/emptyCourtsText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No courts saved."
+        android:textSize="16sp"
+        android:layout_marginTop="32dp"/>
 
-        <TextView
-            android:id="@+id/emptyCourtsText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No courts saved."
-            android:textSize="16sp"
-            android:layout_marginTop="32dp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/courtsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"/>
 
-        <LinearLayout
-            android:id="@+id/courtsContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp"/>
+    <Button
+        android:id="@+id/backToMenuButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Menu"
+        android:layout_marginTop="12dp"/>
 
-        <Button
-            android:id="@+id/backToMenuButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Menu"
-            android:layout_marginTop="24dp"/>
-
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>
