@@ -84,4 +84,33 @@ class PadelCourtMemStoreTest {
             )
         )
     }
+
+    @Test
+    fun updatePreservesCourtMetadata() {
+        val original = store.create(
+            PadelCourt(
+                name = "padel waterford",
+                address = "Waterford",
+                rating = 5.0,
+                latitude = 10.0,
+                longitude = 0.0
+            )
+        )
+
+        val edited = original.copy(
+            name = "padel waterford 2026"
+        )
+
+        assertTrue(store.update(edited))
+
+        val saved = store.findOne(original.id)
+
+        assertNotNull(saved)
+        assertEquals(original.id, saved?.id)
+        assertEquals("padel waterford 2026", saved?.name)
+        assertEquals(5.0, saved!!.rating!!, 0.001)
+        assertEquals(10.0, saved.latitude!!, 0.0001)
+        assertEquals(0.0, saved.longitude!!, 0.0001)
+    }
+
 }

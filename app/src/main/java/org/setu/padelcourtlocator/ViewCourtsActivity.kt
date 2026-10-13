@@ -1,5 +1,7 @@
 package org.setu.padelcourtlocator
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -10,6 +12,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.setu.padelcourtlocator.models.PadelCourt
+import timber.log.Timber
 
 class ViewCourtsActivity : AppCompatActivity() {
 
@@ -42,17 +46,31 @@ class ViewCourtsActivity : AppCompatActivity() {
                 right + bars.right,
                 bottom + bars.bottom
             )
+
             insets
         }
 
-        // Connect XML views
         recyclerView = findViewById(R.id.courtsRecyclerView)
         emptyText = findViewById(R.id.emptyCourtsText)
         countText = findViewById(R.id.courtsCountText)
 
-        // Configure RecyclerView
+        // Configure adapter with listener
         adapter = PadelCourtAdapter(
-            AppData.courts.findAll()
+            courts = AppData.courts.findAll(),
+
+            listener = object : OnCourtListener {
+
+                override fun onCourtClick(court: PadelCourt) {
+                    editCourt(court)
+                }
+
+                override fun onCourtLongClick(
+                    court: PadelCourt
+                ): Boolean {
+                    confirmDelete(court)
+                    return true
+                }
+            }
         )
 
         recyclerView.layoutManager =
@@ -60,7 +78,6 @@ class ViewCourtsActivity : AppCompatActivity() {
 
         recyclerView.adapter = adapter
 
-        // Back navigation
         findViewById<Button>(R.id.backToMenuButton)
             .setOnClickListener {
                 finish()
@@ -78,13 +95,10 @@ class ViewCourtsActivity : AppCompatActivity() {
     private fun displayCourts() {
         val courts = AppData.courts.findAll()
 
-        // Refresh list
         adapter.updateCourts(courts)
 
-        // Update count
         countText.text = "Saved courts: ${courts.size}"
 
-        // Show empty message if necessary
         if (courts.isEmpty()) {
             emptyText.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
@@ -92,5 +106,65 @@ class ViewCourtsActivity : AppCompatActivity() {
             emptyText.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
         }
+    }
+
+    private fun editCourt(court: PadelCourt) {
+        Timber.d(
+            "Opening court editor: id=%d",
+            court.id
+        )
+
+        val intent = Intent(
+            this,
+            AddCourtActivity::class.java
+        )
+
+        intent.putExtra(
+            AddCourtActivity.EXTRA_COURT_ID,
+            court.id
+        )
+
+        startActivity(intent)
+    }
+
+    private fun confirmDelete(court: PadelCourt) {
+        Timber.d(
+            "Delete confirmation requested: id=%d",
+            court.id
+        )
+
+        AlertDialog.Builder(this)
+            .setTitle("Delete Court")
+            .setMessage(
+                "Are you sure you want to delete '${court.name}'?"
+            )
+            .setPositiveButton("Delete") { _, _ ->
+                deleteCourt(court)
+            }
+            .setNegativeButton("Cancel") { _, _ ->
+                Timber.d(
+                    "Court deletion cancelled: id=%d",
+                    court.id
+                )
+            }
+            .show()
+    }
+
+    private fun deleteCourt(court: PadelCourt) {
+        val deleted = AppData.courts.delete(court.id)
+
+        if (deleted) {
+            Timber.i(
+                "Court deleted: id=%d",
+                court.id
+            )
+        } else {
+            Timber.w(
+                "Court deletion failed: id=%d",
+                court.id
+            )
+        }
+
+        displayCourts()
     }
 }

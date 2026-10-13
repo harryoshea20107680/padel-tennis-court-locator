@@ -8,11 +8,25 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import android.content.pm.ApplicationInfo
+import timber.log.Timber
+
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialise Timber
+        if (
+            (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0 &&
+            Timber.forest().isEmpty()
+        ) {
+            Timber.plant(Timber.DebugTree())
+        }
+
+        Timber.d("MainActivity created")
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 

@@ -6,9 +6,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.setu.padelcourtlocator.models.PadelCourt
+import timber.log.Timber
 
 class PadelCourtAdapter(
-    private var courts: List<PadelCourt>
+    private var courts: List<PadelCourt>,
+    private val listener: OnCourtListener
 ) : RecyclerView.Adapter<PadelCourtAdapter.CourtViewHolder>() {
 
     class CourtViewHolder(itemView: View) :
@@ -64,6 +66,36 @@ class PadelCourtAdapter(
         } else {
             holder.websiteText.text = website
             holder.websiteText.visibility = View.VISIBLE
+        }
+
+        // Single click: edit court
+        holder.itemView.setOnClickListener {
+            val index = holder.bindingAdapterPosition
+
+            if (index != RecyclerView.NO_POSITION) {
+                val selected = courts[index]
+
+                Timber.d("Court clicked: id=%d", selected.id)
+                listener.onCourtClick(selected)
+            }
+        }
+
+        // Long press: ask to delete court
+        holder.itemView.setOnLongClickListener {
+            val index = holder.bindingAdapterPosition
+
+            if (index != RecyclerView.NO_POSITION) {
+                val selected = courts[index]
+
+                Timber.d(
+                    "Court long pressed: id=%d",
+                    selected.id
+                )
+
+                listener.onCourtLongClick(selected)
+            } else {
+                false
+            }
         }
     }
 
