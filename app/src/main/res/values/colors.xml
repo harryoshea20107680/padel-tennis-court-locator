@@ -2,4 +2,21 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="court_blue">#2D6DB6</color>
+    <color name="padel_yellow">#E6F04A</color>
+    <color name="on_padel_yellow">#101820</color>
+
+    <color name="light_background">#FFFFFF</color>
+    <color name="light_surface">#F3F7FC</color>
+    <color name="light_text">#15263C</color>
+    <color name="light_secondary_text">#44566D</color>
+    <color name="light_outline">#718198</color>
+
+    <color name="dark_background">#0A0E14</color>
+    <color name="dark_surface">#161E29</color>
+    <color name="dark_text">#F5F7FB</color>
+    <color name="dark_secondary_text">#C0CBDA</color>
+    <color name="dark_outline">#A8B7C9</color>
+
 </resources>

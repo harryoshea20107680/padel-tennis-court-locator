@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -22,7 +23,7 @@ class AddCourtActivity : AppCompatActivity() {
     private lateinit var nameInput: EditText
     private lateinit var addressInput: EditText
     private lateinit var websiteInput: EditText
-    private lateinit var countInput: EditText
+    private lateinit var courtCountPicker: NumberPicker
     private lateinit var indoorInput: CheckBox
 
     private var editingCourt: PadelCourt? = null
@@ -49,7 +50,10 @@ class AddCourtActivity : AppCompatActivity() {
         nameInput = findViewById(R.id.courtNameInput)
         addressInput = findViewById(R.id.courtAddressInput)
         websiteInput = findViewById(R.id.courtWebsiteInput)
-        countInput = findViewById(R.id.courtCountInput)
+        courtCountPicker = findViewById(R.id.courtCountPicker)
+        courtCountPicker.minValue = 1
+        courtCountPicker.maxValue = 10
+        courtCountPicker.value = 1
         indoorInput = findViewById(R.id.indoorCheckBox)
 
         val courtId = intent.getLongExtra(
@@ -95,7 +99,7 @@ class AddCourtActivity : AppCompatActivity() {
         nameInput.setText(court.name)
         addressInput.setText(court.address)
         websiteInput.setText(court.website.orEmpty())
-        countInput.setText(court.courtCount.toString())
+        courtCountPicker.value = court.courtCount
         indoorInput.isChecked = court.isIndoor
 
         Timber.d("Loaded court for editing: id=%d", id)
@@ -106,11 +110,8 @@ class AddCourtActivity : AppCompatActivity() {
         val address = addressInput.text.toString().trim()
         val website = websiteInput.text.toString().trim()
 
-        val courtCount = countInput.text
-            .toString()
-            .toIntOrNull()
+        val courtCount = courtCountPicker.value
 
-        // Validate input
         if (name.isBlank()) {
             nameInput.error = "Court name is required"
             return
@@ -121,15 +122,9 @@ class AddCourtActivity : AppCompatActivity() {
             return
         }
 
-        if (courtCount == null || courtCount < 1) {
-            countInput.error = "At least 1 court required"
-            return
-        }
-
         val existing = editingCourt
 
         if (existing == null) {
-            // Create a new court
             val newCourt = PadelCourt(
                 name = name,
                 address = address,
@@ -149,7 +144,6 @@ class AddCourtActivity : AppCompatActivity() {
             ).show()
 
         } else {
-            // Preserve ID and other existing properties
             val updatedCourt = existing.copy(
                 name = name,
                 address = address,

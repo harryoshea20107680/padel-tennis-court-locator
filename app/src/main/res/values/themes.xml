@@ -1,9 +1,30 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.PadelCourtLocator" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<resources>
+
+    <style name="Base.Theme.PadelCourtLocator"
+        parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- Primary: Padel Court Blue -->
+        <item name="colorPrimary">@color/court_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Secondary: Padel Ball Yellow -->
+        <item name="colorSecondary">@color/padel_yellow</item>
+        <item name="colorOnSecondary">@color/on_padel_yellow</item>
+
+        <item name="android:colorBackground">@color/light_background</item>
+        <item name="colorOnBackground">@color/light_text</item>
+
+        <item name="colorSurface">@color/light_surface</item>
+        <item name="colorOnSurface">@color/light_text</item>
+        <item name="colorOnSurfaceVariant">@color/light_secondary_text</item>
+        <item name="colorOutline">@color/light_outline</item>
+
+        <item name="android:windowBackground">@color/light_background</item>
+        <item name="android:colorAccent">@color/court_blue</item>
+
     </style>
 
-    <style name="Theme.PadelCourtLocator" parent="Base.Theme.PadelCourtLocator" />
+    <style name="Theme.PadelCourtLocator"
+        parent="Base.Theme.PadelCourtLocator" />
+
 </resources>
