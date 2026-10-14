@@ -1,7 +1,25 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.PadelCourtLocator" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+<resources>
+
+    <style name="Base.Theme.PadelCourtLocator"
+        parent="Theme.Material3.DayNight.NoActionBar">
+
+        <item name="colorPrimary">@color/court_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <item name="colorSecondary">@color/padel_yellow</item>
+        <item name="colorOnSecondary">@color/on_padel_yellow</item>
+
+        <item name="android:colorBackground">@color/dark_background</item>
+        <item name="colorOnBackground">@color/dark_text</item>
+
+        <item name="colorSurface">@color/dark_surface</item>
+        <item name="colorOnSurface">@color/dark_text</item>
+        <item name="colorOnSurfaceVariant">@color/dark_secondary_text</item>
+        <item name="colorOutline">@color/dark_outline</item>
+
+        <item name="android:windowBackground">@color/dark_background</item>
+        <item name="android:colorAccent">@color/court_blue</item>
+
     </style>
+
 </resources>
