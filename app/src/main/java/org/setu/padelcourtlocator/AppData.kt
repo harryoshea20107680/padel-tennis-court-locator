@@ -1,8 +1,9 @@
 package org.setu.padelcourtlocator
 
+import android.content.Context
 import org.setu.padelcourtlocator.models.PadelCourtMemStore
 import org.setu.padelcourtlocator.models.PadelCourtStore
-
+import org.setu.padelcourtlocator.models.PadelCourtJSONStore
 object AppData {
-    val courts: PadelCourtStore = PadelCourtMemStore()
+    lateinit var courts: PadelCourtStore
 }

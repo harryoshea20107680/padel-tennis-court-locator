@@ -68,6 +68,6 @@ class MainActivity : AppCompatActivity() {
 
         val count = AppData.courts.findAll().size
         findViewById<TextView>(R.id.courtCountText).text =
-            "Courts added this session: $count"
+            "Courts added: $count"
     }
 }
