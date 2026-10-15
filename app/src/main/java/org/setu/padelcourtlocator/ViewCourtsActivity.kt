@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.setu.padelcourtlocator.models.PadelCourt
 import timber.log.Timber
+import androidx.appcompat.widget.SearchView
 
 class ViewCourtsActivity : AppCompatActivity() {
 
@@ -21,6 +22,7 @@ class ViewCourtsActivity : AppCompatActivity() {
     private lateinit var adapter: PadelCourtAdapter
     private lateinit var emptyText: TextView
     private lateinit var countText: TextView
+    private var searchQuery = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +80,27 @@ class ViewCourtsActivity : AppCompatActivity() {
 
         recyclerView.adapter = adapter
 
+        val searchView =
+            findViewById<SearchView>(R.id.searchCourtsView)
+
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    searchQuery = query.orEmpty()
+                    displayCourts()
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    searchQuery = newText.orEmpty()
+                    displayCourts()
+                    return true
+                }
+            }
+        )
+
+
         findViewById<Button>(R.id.backToMenuButton)
             .setOnClickListener {
                 finish()
@@ -93,22 +116,40 @@ class ViewCourtsActivity : AppCompatActivity() {
     }
 
     private fun displayCourts() {
-        val courts = AppData.courts.findAll()
 
-        adapter.updateCourts(courts)
+        val allCourts = AppData.courts.findAll()
 
-        countText.text = "Saved courts: ${courts.size}"
+        val filteredCourts = allCourts.filter {
+            it.name.contains(searchQuery.trim(), ignoreCase = true)
+        }
 
-        if (courts.isEmpty()) {
+        adapter.updateCourts(filteredCourts)
+
+        if (searchQuery.isBlank()) {
+            countText.text = "Saved courts: ${allCourts.size}"
+        } else {
+            countText.text =
+                "Courts matching $searchQuery : ${filteredCourts.size} of ${allCourts.size} saved courts"
+        }
+
+        if (filteredCourts.isEmpty()) {
+
+            emptyText.text = if (allCourts.isEmpty()) {
+                "No courts saved."
+            } else {
+                "No courts saved matching $searchQuery"
+            }
+
             emptyText.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
+
         } else {
             emptyText.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
         }
     }
 
-    private fun editCourt(court: PadelCourt) {
+private fun editCourt(court: PadelCourt) {
         Timber.d(
             "Opening court editor: id=%d",
             court.id
