@@ -168,61 +168,65 @@ class AddCourtActivity : AppCompatActivity() {
 
         val existing = editingCourt
 
-        if (existing == null) {
-            val newCourt = PadelCourt(
-                name = name,
-                address = address,
-                website = website.ifBlank { null },
-                courtCount = courtCount,
-                isIndoor = indoorInput.isChecked,
-                imageUri = selectedImageUri?.toString()
-            )
-
-            val saved = AppData.courts.create(newCourt)
-
-            Timber.i("Court created: id=%d", saved.id)
-
-            Toast.makeText(
-                this,
-                "Court added successfully",
-                Toast.LENGTH_SHORT
-            ).show()
-
-        } else {
-            val updatedCourt = existing.copy(
-                name = name,
-                address = address,
-                website = website.ifBlank { null },
-                courtCount = courtCount,
-                isIndoor = indoorInput.isChecked,
-                imageUri = selectedImageUri?.toString()
-            )
-
-            val updated = AppData.courts.update(updatedCourt)
-
-            if (!updated) {
-                Timber.w(
-                    "Court update failed: id=%d",
-                    existing.id
+        try {
+            if (existing == null) {
+                val newCourt = PadelCourt(
+                    name = name,
+                    address = address,
+                    website = website.ifBlank { null },
+                    courtCount = courtCount,
+                    isIndoor = indoorInput.isChecked,
+                    imageUri = selectedImageUri?.toString()
                 )
+
+                val saved = AppData.courts.create(newCourt)
+
+                Timber.i("Court created: id=%d", saved.id)
 
                 Toast.makeText(
                     this,
-                    "Unable to update court",
+                    "Court added successfully",
                     Toast.LENGTH_SHORT
                 ).show()
-                return
+
+            } else {
+                val updatedCourt = existing.copy(
+                    name = name,
+                    address = address,
+                    website = website.ifBlank { null },
+                    courtCount = courtCount,
+                    isIndoor = indoorInput.isChecked,
+                    imageUri = selectedImageUri?.toString()
+                )
+
+                val updated = AppData.courts.update(updatedCourt)
+
+                if (!updated) {
+                    Toast.makeText(
+                        this,
+                        "Unable to update court",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+
+                Timber.i("Court updated: id=%d", existing.id)
+
+                Toast.makeText(
+                    this,
+                    "Court updated successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
-            Timber.i("Court updated: id=%d", existing.id)
+            finish()
 
+        } catch (e: IllegalArgumentException) {
             Toast.makeText(
                 this,
-                "Court updated successfully",
-                Toast.LENGTH_SHORT
+                e.message ?: "Please check the entered values.",
+                Toast.LENGTH_LONG
             ).show()
         }
-
-        finish()
     }
 }
