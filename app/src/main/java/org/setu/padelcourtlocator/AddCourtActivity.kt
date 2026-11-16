@@ -13,6 +13,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import org.setu.padelcourtlocator.models.PadelCourt
 import timber.log.Timber
+import android.net.Uri
+import android.content.Intent
+import android.widget.ImageView
+import androidx.activity.result.contract.ActivityResultContracts
 
 class AddCourtActivity : AppCompatActivity() {
 
@@ -27,6 +31,9 @@ class AddCourtActivity : AppCompatActivity() {
     private lateinit var indoorInput: CheckBox
 
     private var editingCourt: PadelCourt? = null
+
+    private lateinit var imagePreview: ImageView
+    private var selectedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +62,31 @@ class AddCourtActivity : AppCompatActivity() {
         courtCountPicker.maxValue = 10
         courtCountPicker.value = 1
         indoorInput = findViewById(R.id.indoorCheckBox)
+        imagePreview = findViewById(R.id.courtImagePreview)
+
+        val imagePicker =
+            registerForActivityResult(
+                ActivityResultContracts.OpenDocument()
+            ) { uri: Uri? ->
+
+                if (uri != null) {
+
+                    try {
+                        contentResolver.takePersistableUriPermission(
+                            uri,
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        )
+                    } catch (_: SecurityException) { }
+
+                    selectedImageUri = uri
+                    imagePreview.setImageURI(uri)
+                }
+            }
+
+        findViewById<Button>(R.id.imagePickButton)
+            .setOnClickListener {
+                imagePicker.launch(arrayOf("image/*"))
+            }
 
         val courtId = intent.getLongExtra(
             EXTRA_COURT_ID, -1L
@@ -102,6 +134,18 @@ class AddCourtActivity : AppCompatActivity() {
         courtCountPicker.value = court.courtCount
         indoorInput.isChecked = court.isIndoor
 
+        selectedImageUri = court.imageUri?.let {
+            Uri.parse(it)
+        }
+
+        if (selectedImageUri != null) {
+            imagePreview.setImageURI(selectedImageUri)
+        } else {
+            imagePreview.setImageResource(
+                android.R.drawable.ic_menu_gallery
+            )
+        }
+
         Timber.d("Loaded court for editing: id=%d", id)
     }
 
@@ -130,7 +174,8 @@ class AddCourtActivity : AppCompatActivity() {
                 address = address,
                 website = website.ifBlank { null },
                 courtCount = courtCount,
-                isIndoor = indoorInput.isChecked
+                isIndoor = indoorInput.isChecked,
+                imageUri = selectedImageUri?.toString()
             )
 
             val saved = AppData.courts.create(newCourt)
@@ -149,7 +194,8 @@ class AddCourtActivity : AppCompatActivity() {
                 address = address,
                 website = website.ifBlank { null },
                 courtCount = courtCount,
-                isIndoor = indoorInput.isChecked
+                isIndoor = indoorInput.isChecked,
+                imageUri = selectedImageUri?.toString()
             )
 
             val updated = AppData.courts.update(updatedCourt)
