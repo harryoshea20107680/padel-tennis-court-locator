@@ -35,6 +35,9 @@ class AddCourtActivity : AppCompatActivity() {
     private lateinit var imagePreview: ImageView
     private var selectedImageUri: Uri? = null
 
+    private lateinit var latitudeInput: EditText
+    private lateinit var longitudeInput: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -63,6 +66,8 @@ class AddCourtActivity : AppCompatActivity() {
         courtCountPicker.value = 1
         indoorInput = findViewById(R.id.indoorCheckBox)
         imagePreview = findViewById(R.id.courtImagePreview)
+        latitudeInput = findViewById(R.id.courtLatitudeInput)
+        longitudeInput = findViewById(R.id.courtLongitudeInput)
 
         val imagePicker =
             registerForActivityResult(
@@ -86,6 +91,62 @@ class AddCourtActivity : AppCompatActivity() {
         findViewById<Button>(R.id.imagePickButton)
             .setOnClickListener {
                 imagePicker.launch(arrayOf("image/*"))
+            }
+
+        val mapPicker =
+            registerForActivityResult(
+                ActivityResultContracts.StartActivityForResult()
+            ) { result ->
+
+                if (result.resultCode == RESULT_OK) {
+                    val data = result.data
+                        ?: return@registerForActivityResult
+
+                    if (data.hasExtra("latitude") &&
+                        data.hasExtra("longitude")) {
+
+                        val latitude =
+                            data.getDoubleExtra("latitude", 0.0)
+
+                        val longitude =
+                            data.getDoubleExtra("longitude", 0.0)
+
+                        latitudeInput.setText(latitude.toString())
+                        longitudeInput.setText(longitude.toString())
+                    }
+                }
+            }
+
+
+        findViewById<Button>(R.id.chooseLocationButton)
+            .setOnClickListener {
+
+                val intent = Intent(
+                    this,
+                    MapPickerActivity::class.java
+                )
+
+                val latitude =
+                    latitudeInput.text.toString().toDoubleOrNull()
+
+                val longitude =
+                    longitudeInput.text.toString().toDoubleOrNull()
+
+                if (latitude != null && longitude != null &&
+                    latitude.isFinite() && longitude.isFinite() &&
+                    latitude in -90.0..90.0 &&
+                    longitude in -180.0..180.0) {
+
+                    intent.putExtra("latitude", latitude)
+                    intent.putExtra("longitude", longitude)
+                }
+
+                intent.putExtra(
+                    "title",
+                    nameInput.text.toString().trim()
+                )
+
+                mapPicker.launch(intent)
             }
 
         val courtId = intent.getLongExtra(
@@ -134,6 +195,10 @@ class AddCourtActivity : AppCompatActivity() {
         courtCountPicker.value = court.courtCount
         indoorInput.isChecked = court.isIndoor
 
+        latitudeInput.setText(court.latitude?.toString().orEmpty())
+
+        longitudeInput.setText(court.longitude?.toString().orEmpty())
+
         selectedImageUri = court.imageUri?.let {
             Uri.parse(it)
         }
@@ -156,6 +221,39 @@ class AddCourtActivity : AppCompatActivity() {
 
         val courtCount = courtCountPicker.value
 
+        val latitudeText = latitudeInput.text.toString().trim()
+
+        val longitudeText = longitudeInput.text.toString().trim()
+
+        val latitude = latitudeText.toDoubleOrNull()
+        val longitude = longitudeText.toDoubleOrNull()
+
+        if (latitudeText.isNotEmpty() &&
+            (latitude == null || !latitude.isFinite() ||
+                    latitude !in -90.0..90.0)) {
+
+            latitudeInput.error = "Enter a valid latitude"
+            return
+        }
+
+        if (longitudeText.isNotEmpty() &&
+            (longitude == null || !longitude.isFinite() ||
+                    longitude !in -180.0..180.0)) {
+
+            longitudeInput.error = "Enter a valid longitude"
+            return
+        }
+
+        if (latitude == null && longitude != null) {
+            latitudeInput.error = "Latitude is required"
+            return
+        }
+
+        if (longitude == null && latitude != null) {
+            longitudeInput.error = "Longitude is required"
+            return
+        }
+
         if (name.isBlank()) {
             nameInput.error = "Court name is required"
             return
@@ -176,7 +274,9 @@ class AddCourtActivity : AppCompatActivity() {
                     website = website.ifBlank { null },
                     courtCount = courtCount,
                     isIndoor = indoorInput.isChecked,
-                    imageUri = selectedImageUri?.toString()
+                    imageUri = selectedImageUri?.toString(),
+                    latitude = latitude,
+                    longitude = longitude
                 )
 
                 val saved = AppData.courts.create(newCourt)
@@ -196,7 +296,9 @@ class AddCourtActivity : AppCompatActivity() {
                     website = website.ifBlank { null },
                     courtCount = courtCount,
                     isIndoor = indoorInput.isChecked,
-                    imageUri = selectedImageUri?.toString()
+                    imageUri = selectedImageUri?.toString(),
+                    latitude = latitude,
+                    longitude = longitude
                 )
 
                 val updated = AppData.courts.update(updatedCourt)
