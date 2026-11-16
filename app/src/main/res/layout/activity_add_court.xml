@@ -43,6 +43,27 @@
             android:hint="Website (optional)"
             android:inputType="textUri"/>
 
+
+        <EditText
+            android:id="@+id/courtLatitudeInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Latitude"
+            android:inputType="numberDecimal|numberSigned" />
+
+        <EditText
+            android:id="@+id/courtLongitudeInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Longitude"
+            android:inputType="numberDecimal|numberSigned" />
+
+        <Button
+            android:id="@+id/chooseLocationButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Choose Court Location" />
+
         <CheckBox
             android:id="@+id/indoorCheckBox"
             android:layout_width="match_parent"
