@@ -17,6 +17,7 @@ class MapPickerActivity : AppCompatActivity() {
     private lateinit var map: MapView
     private var selectedPoint: GeoPoint? = null
     private var marker: Marker? = null
+    private var selectedTitle: String = "Selected court location"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +28,10 @@ class MapPickerActivity : AppCompatActivity() {
         map = findViewById(R.id.map)
         map.setTileSource(TileSourceFactory.MAPNIK)
         map.setMultiTouchControls(true)
+
+        selectedTitle = intent.getStringExtra("title")
+            ?.takeIf { it.isNotBlank() }
+            ?: "Selected court location"
 
         // Start at saved court location or SETU
         val lat = intent.getDoubleExtra("latitude", 52.245954)
@@ -84,15 +89,18 @@ class MapPickerActivity : AppCompatActivity() {
                     Marker.ANCHOR_CENTER,
                     Marker.ANCHOR_BOTTOM
                 )
+
+                icon = androidx.core.content.ContextCompat.getDrawable(
+                    this@MapPickerActivity,
+                    android.R.drawable.ic_menu_mylocation
+                )
             }
 
             map.overlays.add(marker)
         }
 
         marker?.position = point
-        marker?.title = intent.getStringExtra("title")
-            ?.takeIf { it.isNotBlank() }
-            ?: "Selected court location"
+        marker?.title = selectedTitle
 
         marker?.snippet =
             "GPS: ${point.latitude}, ${point.longitude}"
