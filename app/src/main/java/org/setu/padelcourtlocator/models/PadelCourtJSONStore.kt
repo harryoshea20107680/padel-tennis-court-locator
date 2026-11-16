@@ -39,6 +39,8 @@ class PadelCourtJSONStore(private val context: Context) : PadelCourtStore {
     }
 
     override fun create(court: PadelCourt): PadelCourt {
+        court.validate()
+
         val newCourt = court.copy(id = generateRandomId())
 
         padelCourts.add(newCourt)
@@ -47,8 +49,9 @@ class PadelCourtJSONStore(private val context: Context) : PadelCourtStore {
         return newCourt
     }
 
-
     override fun update(court: PadelCourt): Boolean {
+        court.validate()
+
         val index = padelCourts.indexOfFirst {
             it.id == court.id
         }

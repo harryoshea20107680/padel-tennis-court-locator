@@ -37,4 +37,61 @@ class PadelCourtTest {
         assertEquals(original.id, updated.id)
     }
 
+    @Test
+    fun validCourtPassesValidation() {
+        val court = PadelCourt(
+            name = "Waterford Padel",
+            address = "Waterford",
+            latitude = 52.245954,
+            longitude = -7.139539
+        )
+
+        court.validate()
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun blankCourtNameRejected() {
+        val court = PadelCourt(
+            name = "   ",
+            address = "Waterford"
+        )
+
+        court.validate()
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun invalidLatitudeRejected() {
+        val court = PadelCourt(
+            name = "Test Court",
+            address = "Waterford",
+            latitude = 91.0,
+            longitude = -7.0
+        )
+
+        court.validate()
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun invalidLongitudeRejected() {
+        val court = PadelCourt(
+            name = "Test Court",
+            address = "Waterford",
+            latitude = 53.0,
+            longitude = 181.0
+        )
+
+        court.validate()
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun missingLongitudeRejected() {
+        val court = PadelCourt(
+            name = "Test Court",
+            address = "Waterford",
+            latitude = 53.0
+        )
+
+        court.validate()
+    }
+
 }
