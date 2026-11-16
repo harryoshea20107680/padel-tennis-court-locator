@@ -7,6 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.setu.padelcourtlocator.models.PadelCourt
 import timber.log.Timber
+import android.net.Uri
+import android.widget.ImageView
 
 class PadelCourtAdapter(
     private var courts: List<PadelCourt>,
@@ -27,6 +29,9 @@ class PadelCourtAdapter(
 
         val websiteText: TextView =
             itemView.findViewById(R.id.courtWebsiteText)
+
+        val courtImage: ImageView =
+            itemView.findViewById(R.id.courtImage)
     }
 
     override fun onCreateViewHolder(
@@ -49,6 +54,18 @@ class PadelCourtAdapter(
         position: Int
     ) {
         val court = courts[position]
+
+        val imageUri = court.imageUri?.let {
+            Uri.parse(it)
+        }
+
+        if (imageUri != null) {
+            holder.courtImage.setImageURI(imageUri)
+        } else {
+            holder.courtImage.setImageResource(
+                android.R.drawable.ic_menu_gallery
+            )
+        }
 
         holder.nameText.text = court.name
         holder.addressText.text = court.address

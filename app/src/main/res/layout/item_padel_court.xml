@@ -10,6 +10,15 @@
     android:background="?attr/selectableItemBackground">
 
 
+    <ImageView
+        android:id="@+id/courtImage"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        android:contentDescription="Court image"
+        android:src="@android:drawable/ic_menu_gallery" />
+
     <TextView
         android:id="@+id/courtNameText"
         android:layout_width="match_parent"
